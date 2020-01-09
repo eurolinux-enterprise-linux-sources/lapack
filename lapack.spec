@@ -1,7 +1,7 @@
 Summary: Numerical linear algebra package libraries
 Name: lapack
 Version: 3.2.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: BSD
 Group: Development/Libraries
 URL: http://www.netlib.org/lapack/
@@ -12,6 +12,7 @@ Source3: Makefile.lapack
 Source4: http://www.netlib.org/lapack/lapackqref.ps
 Source5: http://www.netlib.org/blas/blasqr.ps
 Patch3: lapack-3.1.1-make.inc.patch
+Patch4: lapack.3.2.1-makeinc-frecursive.patch
 BuildRequires: gcc-gfortran
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -44,7 +45,7 @@ Group: Development/Libraries
 
 %description -n blas
 BLAS (Basic Linear Algebra Subprograms) is a standard library which
-provides a number of basic algorithms for numerical algebra. 
+provides a number of basic algorithms for numerical algebra.
 
 %package -n blas-devel
 Summary: BLAS development libraries
@@ -57,9 +58,10 @@ Provides: blas-static = %{version}-%{release}
 BLAS development libraries for applications that link statically.
 
 %prep
-%setup -q 
+%setup -q
 %setup -q -D -T -a1
 %patch3 -p1
+%patch4 -p1
 cp -f INSTALL/make.inc.gfortran make.inc
 cp -f %{SOURCE2} BLAS/SRC/Makefile
 cp -f %{SOURCE3} SRC/Makefile
@@ -72,6 +74,7 @@ rm -f manpages/man/manl/zbcon.l
 %build
 # use RPM_OPT_O_FLAGS (-O0) everywhere necessary
 # drop RPM_OPT_SIZE_FLAGS (-Os) (bz 520518)
+RPM_OPT_FLAGS=$RPM_OPT_FLAGS" -frecursive"
 RPM_OPT_O_FLAGS=$(echo $RPM_OPT_FLAGS | sed 's|-O2|-O0|')
 export FC=gfortran
 
@@ -187,8 +190,11 @@ rm -fr ${RPM_BUILD_ROOT}
 %{_libdir}/libblas*.a
 
 %changelog
+* Tue Oct  4 2016 Jakub Martisko <jamartis@redhat.com> - 3.2.1-5
+- use -frecursive compilation flag (bz 1176025)
+
 * Wed Feb 17 2010 Ivana Hutarova Varekova <varekova@redhat.com> - 3.2.1-4
-- Resolves: #543948 
+- Resolves: #543948
   add license file
 
 * Fri Sep  4 2009 Tom "spot" Callaway <tcallawa@redhat.com> - 3.2.1-3
@@ -344,7 +350,7 @@ rm -fr ${RPM_BUILD_ROOT}
 - rebuilt
 
 * Mon Jul 10 2000 Trond Eivind Glomsrod <teg@redhat.com>
-- updated with the latest updates (new tarfile..) from netlib 
+- updated with the latest updates (new tarfile..) from netlib
 
 * Thu Jun 15 2000 Trond Eivind Glomsrod <teg@redhat.com>
 - use %%{_mandir}
