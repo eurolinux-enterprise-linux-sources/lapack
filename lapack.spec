@@ -1,7 +1,7 @@
 %global shortver	3
 %global mediumver	%{shortver}.4
 
-%ifarch x86_64 ppc64
+%if %{__isa_bits} == 64
 %global arch64 1
 %else
 %global arch64 0
@@ -10,7 +10,7 @@
 Summary: Numerical linear algebra package libraries
 Name: lapack
 Version: %{mediumver}.2
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: BSD
 Group: Development/Libraries
 URL: http://www.netlib.org/lapack/
@@ -450,6 +450,10 @@ ln -sf libblas64.so.%{version} libblas64.so.%{mediumver}
 %endif
 
 %changelog
+* Wed Oct 22 2014 Frantisek Kluknavsky <fkluknav@redhat.com> - 3.4.2-5
+- Use generic macro to detect 64 bit platforms (fix ppc64le/aarch64)
+- Resolves: rhbz#1152634
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 3.4.2-4
 - Mass rebuild 2014-01-24
 
