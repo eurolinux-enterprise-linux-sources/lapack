@@ -10,7 +10,7 @@
 Summary: Numerical linear algebra package libraries
 Name: lapack
 Version: %{mediumver}.2
-Release: 2%{?dist}
+Release: 4%{?dist}
 License: BSD
 Group: Development/Libraries
 URL: http://www.netlib.org/lapack/
@@ -450,6 +450,12 @@ ln -sf libblas64.so.%{version} libblas64.so.%{mediumver}
 %endif
 
 %changelog
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 3.4.2-4
+- Mass rebuild 2014-01-24
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 3.4.2-3
+- Mass rebuild 2013-12-27
+
 * Mon Mar 25 2013 Tom Callaway <spot@fedoraproject.org> - 3.4.2-2
 - clean out non-free example files from source tarball
 
