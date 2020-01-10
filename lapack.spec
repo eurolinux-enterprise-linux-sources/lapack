@@ -1,16 +1,18 @@
 %global shortver	3
 %global mediumver	%{shortver}.4
 
+%ifnarch noarch
 %if %{__isa_bits} == 64
 %global arch64 1
 %else
 %global arch64 0
 %endif
+%endif
 
 Summary: Numerical linear algebra package libraries
 Name: lapack
 Version: %{mediumver}.2
-Release: 5%{?dist}
+Release: 8%{?dist}
 License: BSD
 Group: Development/Libraries
 URL: http://www.netlib.org/lapack/
@@ -155,6 +157,16 @@ BLAS static libraries (64bit INTEGER).
 %patch4 -p1 -b .shared
 %patch5 -p1 -b .disable-functions
 
+#remove the stray manpages rhbz#1210162
+rm man/man3/_Users_julie_Documents_Boulot_lapack-dev_lapack_branches_lapack-3.4.1_BLAS_.3
+rm man/man3/_Users_julie_Documents_Boulot_lapack-dev_lapack_branches_lapack-3.4.1_BLAS_SRC_.3
+rm man/man3/_Users_julie_Documents_Boulot_lapack-dev_lapack_branches_lapack-3.4.1_INSTALL_.3
+rm man/man3/_Users_julie_Documents_Boulot_lapack-dev_lapack_branches_lapack-3.4.1_SRC_.3
+rm man/man3/_Users_julie_Documents_Boulot_lapack-dev_lapack_branches_lapack-3.4.2_BLAS_.3
+rm man/man3/_Users_julie_Documents_Boulot_lapack-dev_lapack_branches_lapack-3.4.2_BLAS_SRC_.3
+rm man/man3/_Users_julie_Documents_Boulot_lapack-dev_lapack_branches_lapack-3.4.2_INSTALL_.3
+rm man/man3/_Users_julie_Documents_Boulot_lapack-dev_lapack_branches_lapack-3.4.2_SRC_.3
+
 mkdir manpages
 mv man/ manpages/
 
@@ -170,7 +182,8 @@ sed -i "s|@LONGVER@|%{version}|g" SRC/Makefile
 sed -i "s|@LONGVER@|%{version}|g" lapacke/Makefile
 
 %build
-RPM_OPT_O_FLAGS=$(echo $RPM_OPT_FLAGS | sed 's|-O2|-O0|')
+RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS -frecursive)
+RPM_OPT_O_FLAGS=$(echo $RPM_OPT_FLAGS| sed 's|-O2|-O0|')
 export FC=gfortran
 
 # Build BLAS
@@ -450,6 +463,18 @@ ln -sf libblas64.so.%{version} libblas64.so.%{mediumver}
 %endif
 
 %changelog
+* Thu Mar 02 2017 Jakub Martisko <jamartis@redhat.com> - 3.4.2-8
+- remove stray man pages
+- Resolves: rhbz#1210162
+
+* Wed Mar 01 2017 Jakub Martisko <jamartis@redhat.com> - 3.4.2-7
+- fix issue with creation of srpm where __isa_bits on noarch leads to an error
+- Related: rhbz#1176026
+
+* Wed Mar 01 2017 Jakub Martisko <jamartis@redhat.com> - 3.4.2-6
+- use -frecursive compiler flag
+- Resolves: rhbz#1176026
+
 * Wed Oct 22 2014 Frantisek Kluknavsky <fkluknav@redhat.com> - 3.4.2-5
 - Use generic macro to detect 64 bit platforms (fix ppc64le/aarch64)
 - Resolves: rhbz#1152634
